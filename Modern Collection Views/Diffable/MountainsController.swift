@@ -13,12 +13,6 @@ class MountainsController {
         let name: String
         let height: Int
         let identifier = UUID()
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(identifier)
-        }
-        static func == (lhs: Mountain, rhs: Mountain) -> Bool {
-            return lhs.identifier == rhs.identifier
-        }
         func contains(_ filter: String?) -> Bool {
             guard let filterText = filter else { return true }
             if filterText.isEmpty { return true }
@@ -34,7 +28,7 @@ class MountainsController {
             return filtered
         }
     }
-    private lazy var mountains: [Mountain] = {
+    public lazy var mountains: [Mountain] = {
         return generateMountains()
     }()
 }

@@ -24,6 +24,18 @@ class MountainsViewController: UIViewController {
         configureHierarchy()
         configureDataSource()
         performQuery(with: nil)
+        
+        mountainsCollectionView.delegate = self
+    }
+}
+
+extension MountainsViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        mountainsController.mountains.remove(at: indexPath.row)
+        var snapshot = NSDiffableDataSourceSnapshot<Section, MountainsController.Mountain>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(mountainsController.mountains)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
@@ -46,7 +58,7 @@ extension MountainsViewController {
     
     /// - Tag: MountainsPerformQuery
     func performQuery(with filter: String?) {
-        let mountains = mountainsController.filteredMountains(with: filter).sorted { $0.name < $1.name }
+        let mountains = mountainsController.mountains
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, MountainsController.Mountain>()
         snapshot.appendSections([.main])
@@ -60,7 +72,7 @@ extension MountainsViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int,
             layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection in
             let contentSize = layoutEnvironment.container.effectiveContentSize
-            let columns = contentSize.width > 800 ? 3 : 2
+            let columns = 1
             let spacing = CGFloat(10)
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                   heightDimension: .fractionalHeight(1.0))
